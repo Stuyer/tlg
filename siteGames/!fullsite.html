@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тир лист видеоигр</title>
+    <style>
+        body {
+            background-color: blanchedalmond;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        body.dark-mode {
+            background-color: #28292c;
+            color: #ffffff;
+        }
+
+        /* Стили для заголовка */
+        .title {
+            text-align: center;
+            font-size: 400%;
+            margin-top: 50px;
+            color: black; /* Цвет по умолчанию */
+            transition: color 0.5s ease;
+        }
+
+        .dark-mode .title {
+            color: white; /* Цвет в темной теме */
+        }
+
+        .btn {
+            height: 280px;
+            width: 1000px;
+            background-color: black;
+            background-size: cover;
+            background-position: center;
+            border-radius: 20px;
+            margin-top: 50px;
+            font-size: 5cap;
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            font-family: 'Times New Roman';
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .popup {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            border-radius: 40px;
+            background-color: #333;
+            width: 500px;
+            height: 550px;
+            font-size: 5cap;
+            transform: translateX(-50%) scale(0.9); /* Начинаем с уменьшенного размера */
+            color: white;
+            padding: 30px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* Тень для эффекта поднятия */
+            user-select: none;
+            text-align: left;
+            z-index: 1000;
+        }
+
+        .popup.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) scale(1); /* Увеличиваем до нормального размера */
+        }
+
+        .selector {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 30px;
+        }
+
+        select {
+            font-size: 20px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* Стили для кнопки "Наверх" */
+        #scroll-to-top {
+            position: fixed;
+            bottom: -60px;
+            right: 20px;
+            z-index: 1000;
+            width: 40px;
+            height: 40px;
+            border: none;
+            border-radius: 50%;
+            background-color: #333;
+            color: white;
+            font-size: 22px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.5s ease, bottom 0.5s ease, background-color 0.5s ease;
+        }
+
+        #scroll-to-top.visible {
+            opacity: 0.7;
+            bottom: 20px;
+        }
+
+        #scroll-to-top:hover {
+            opacity: 1;
+        }
+
+        .dark-mode #scroll-to-top {
+            background-color: #d8dbe0; /* Светлый фон в темной теме */
+            color: #28292c; /* Темный текст в темной теме */
+        }
+
+        .content-container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        #text-container {
+            position: absolute;
+        }
+
+        .numeration {
+            position: absolute;
+            font-size: 80px;
+            color: black;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            font-weight: bold;
+        }
+
+        .dark-mode .numeration {
+            color: white;
+        }
+
+        .toggle-switch {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 100px;
+            height: 50px;
+            --light: #d8dbe0;
+            --dark: #28292c;
+            z-index: 1000;
+        }
+
+        .switch-label {
+            position: absolute;
+            width: 100%;
+            height: 45px;
+            background-color: var(--dark);
+            border-radius: 25px;
+            cursor: pointer;
+            border: 3px solid var(--dark);
+        }
+
+        .checkbox {
+            position: absolute;
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .checkbox:checked ~ .slider {
+            background-color: var(--light);
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            box-shadow: inset 12px -4px 0px 0px var(--light);
+            background-color: var(--dark);
+            transition: 0.3s;
+        }
+
+        .checkbox:checked ~ .slider::before {
+            transform: translateX(50px);
+            background-color: var(--dark);
+            box-shadow: none;
+        }
+
+        /* Медиа-запросы для адаптивности */
+        @media (max-width: 768px) {
+            .btn {
+                width: 100%; /* Кнопки на всю ширину */
+                height: auto; /* Автоматическая высота */
+                font-size: 1.5em; /* Уменьшаем шрифт */
+            }
+            .popup {
+                width: 90%; /* Попап на 90% ширины экрана */
+                height: auto; /* Автоматическая высота */
+                font-size: 1.2em; /* Уменьшаем шрифт */
+                top: 20%; /* Сдвигаем попап выше */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .btn {
+                font-size: 1.2em; /* Еще меньше шрифт для телефонов */
+            }
+            .popup {
+                font-size: 1em; /* Еще меньше шрифт */
+                top: 10%; /* Еще выше для маленьких экранов */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="toggle-switch">
+        <label class="switch-label">
+            <input type="checkbox" class="checkbox" id="theme-toggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="title">
+        <b><font face="Mason Chronicles">Тир лист видеоигр, рейтинг при наведении</font></b>
+    </div>
+    
+    <div class="selector">
+        <label for="sort-criteria">Сортировать по:</label>
+        <select id="sort-criteria" onchange="sortButtonsByCriteria()">
+            <option value="rating">Общий рейтинг</option>
+            <option value="story">Сюжет</option>
+            <option value="graphics">Графика</option>
+            <option value="gameplay">Геймплей</option>
+            <option value="main-character">Главный герой</option>
+            <option value="characters">Персонажи</option>
+            <option value="atmosphere">Атмосфера</option>
+            <option value="music">Музыка</option>
+        </select>
+    </div>
+
+    <div class="content-container">
+        <div id="text-container">
+            <span class="numeration" style="color: gold;">1</span>
+            <span class="numeration" style="color: silver">2</span>
+            <span class="numeration" style="color: #cd7f32;">3</span>
+            <span class="numeration">4</span>
+            <span class="numeration">5</span>
+            <span class="numeration">6</span>
+            <span class="numeration">7</span>
+            <span class="numeration">8</span>
+            <span class="numeration">9</span>
+            <span class="numeration">10</span>
+            <span class="numeration">11</span>
+            <span class="numeration">12</span>
+            <span class="numeration">13</span>
+            <span class="numeration">14</span>
+            <span class="numeration">15</span>
+            <span class="numeration">16</span>
+            <span class="numeration">17</span>
+            <span class="numeration">18</span>
+            <span class="numeration">19</span>
+            <span class="numeration">20</span>
+            <span class="numeration">21</span>
+            <span class="numeration">22</span>
+            <span class="numeration">23</span>
+        </div>
+
+        <div id="buttons-container">
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('w3')" onmouseout="hidePopup('w3')" style="background-image: url('w3.jpg');">
+                    <font face="Mason Chronicles">Witcher 3: Wild Hunt</font>
+                </button>
+                <div id="w3" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">9</span><br>Геймплей: <span class="gameplay">8</span><br>Главный герой: <span class="main-character">10</span><br>Персонажи: <span class="characters">10</span><br>Атмосфера: <span class="atmosphere">10</span><br>Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">9.4</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('rdr2')" onmouseout="hidePopup('rdr2')" style="background-image: url('rdr2.jpg');">
+                    <font face="Chinese Rocks">Red Dead Redemption 2</font>
+                </button>
+                <div id="rdr2" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">10</span><br>Геймплей: <span class="gameplay">10</span><br>Главный герой: <span class="main-character">10</span><br>Персонажи: <span class="characters">10</span><br>Атмосфера: <span class="atmosphere">9</span><br>Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9.4</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('cyb')" onmouseout="hidePopup('cyb')" style="background-image: url('cyb.jpg'); background-size: 101% ">
+                    <font face="Cyberpunk">Cyberpunk 2077</font>
+                </button>
+                <div id="cyb" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">10</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9.1</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('gtaV')" onmouseout="hidePopup('gtaV')" style="background-image: url('gtaV.jpg');">
+                    Grand Theft Auto V
+                </button>
+                <div id="gtaV" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">8.9</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('alw2')" onmouseout="hidePopup('alw2')" style="background-image: url('alw2.jpg');">
+                    Alan Wake 2
+                </button>
+                <div id="alw2" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9</span></div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('tlou')" onmouseout="hidePopup('tlou')" style="background-image: url('tlou.jpg');">
+                    The Last of Us Part I
+                </button>
+                <div id="tlou" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">9</span><br> Геймплей: <span class="gameplay">10</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">9.1</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('det')" onmouseout="hidePopup('det')" style="background-image: url('det.jpg');">
+                    Detroit: Become Human
+                </button>
+                <div id="det" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('eld')" onmouseout="hidePopup('eld')" style="background-image: url('eld.jpg');">
+                    Elden Ring
+                </button>
+                <div id="eld" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('dsr')" onmouseout="hidePopup('dsr')" style="background-image: url('dsr.jpg');">
+                    Dead Space Remake
+                </button>
+                <div id="dsr" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('bmw')" onmouseout="hidePopup('bmw')" style="background-image: url('bmw.jpg');">
+                    Black Myth: Wukong
+                </button>
+                <div id="bmw" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">9</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">7</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">8.1</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('bak')" onmouseout="hidePopup('bak')" style="background-image: url('bak.jpg');">
+                    Batman: Arkham Knight
+                </button>
+                <div id="bak" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">10</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('hev')" onmouseout="hidePopup('hev')" style="background-image: url('hev.jpg'); background-position: 0% 70%;">
+                    Heavy Rain
+                </button>
+                <div id="hev" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">8.4</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('re4')" onmouseout="hidePopup('re4')" style="background-image: url('re4.jpeg'); background-position: 0% 75%;">
+                    Resident Evil 4 Remake
+                </button>
+                <div id="re4" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8.1</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('d16')" onmouseout="hidePopup('d16')" style="background-image: url('d16.jpg');">
+                    Doom (2016)
+                </button>
+                <div id="d16" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('dete')" onmouseout="hidePopup('dete')" style="background-image: url('dete.jpg');">
+                    Doom Eternal
+                </button>
+                <div id="dete" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.9</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('lim')" onmouseout="hidePopup('lim')" style="background-image: url('lim.jpg');">
+                    Limbo
+                </button>
+                <div id="lim" class="popup">Сюжет: <span class="story">6</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">6</span> Атмосфера: <span class="atmosphere">10</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('ins')" onmouseout="hidePopup('ins')" style="background-image: url('ins.jpg');">
+                    Inside
+                </button>
+                <div id="ins" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">6</span> Персонажи: <span class="characters">6</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.3</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('crw')" onmouseout="hidePopup('crw')" style="background-image: url('crw.jpg');">
+                    Thronebreaker: The Witcher Tales
+                </button>
+                <div id="crw" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">8</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('fir')" onmouseout="hidePopup('fir')" style="background-image: url('fir.png');">
+                    Firewatch
+                </button>
+                <div id="fir" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('swd')" onmouseout="hidePopup('swd')" style="background-image: url('swd.jpg');">
+                    Still Wakes the Deep
+                </button>
+                <div id="swd" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.6</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('fhr')" onmouseout="hidePopup('fhr')" style="background-image: url('fhr.jpg');">
+                    Fahrenheit: Indigo Prophecy Remastered
+                </button>
+                <div id="fhr" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">5</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('inc')" onmouseout="hidePopup('inc')" style="background-image: url('inc.jpg');">
+                    Inscryption
+                </button>
+                <div id="inc" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">6</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">6</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">7</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.1</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('mf2')" onmouseout="hidePopup('mf2')" style="background-image: url('mf2.png');">
+                    Mafia II
+                </button>
+                <div id="mf2" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.4</span></div>
+            </div>
+        </div>
+    </div>
+
+    <button style="visibility: hidden; height: 100px;"></button>
+    <button id="scroll-to-top" title="Наверх">↑</button>
+
+    <script>
+        // Функция для извлечения значения критерия
+        function getCriterionValue(popup, criterion) {
+            const valueText = popup.querySelector(`.${criterion}`).textContent;
+            return parseFloat(valueText);
+        }
+
+        // Функция для сортировки кнопок по выбранному критерию
+        function sortButtonsByCriteria() {
+            const container = document.getElementById('buttons-container');
+            const buttons = Array.from(container.children);
+            const selectedCriterion = document.getElementById('sort-criteria').value;
+
+            buttons.sort((a, b) => {
+                const valueA = getCriterionValue(a.querySelector('.popup'), selectedCriterion);
+                const valueB = getCriterionValue(b.querySelector('.popup'), selectedCriterion);
+                return valueB - valueA; // Сортировка по убыванию
+            });
+
+            // Очищаем контейнер и добавляем отсортированные кнопки
+            container.innerHTML = '';
+            buttons.forEach(button => container.appendChild(button));
+        }
+
+        // Функции для показа/скрытия попапа
+        function showPopup(id) {
+            const popup = document.getElementById(id);
+            popup.classList.add('active');
+        }
+
+        function hidePopup(id) {
+            const popup = document.getElementById(id);
+            // Проверяем, находится ли курсор на попапе
+            if (!popup.matches(':hover')) {
+                popup.classList.remove('active');
+            }
+        }
+
+        // Назначаем обработчики для всех кнопок
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('mouseover', () => {
+                const popupId = button.getAttribute('onmouseover').match(/'(.*?)'/)[1];
+                showPopup(popupId);
+            });
+
+            button.addEventListener('mouseout', () => {
+                const popupId = button.getAttribute('onmouseout').match(/'(.*?)'/)[1];
+                hidePopup(popupId);
+            });
+        });
+
+        // Назначаем обработчики для всех попапов
+        document.querySelectorAll('.popup').forEach(popup => {
+            popup.addEventListener('mouseout', () => {
+                const popupId = popup.id;
+                hidePopup(popupId);
+            });
+        });
+
+        // Сортировка при загрузке страницы
+        window.onload = sortButtonsByCriteria;
+
+        // Функция для плавного скроллинга вверх
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth' // Плавный скроллинг
+            });
+        }
+
+        // Функция для отображения/скрытия кнопки
+        function toggleScrollButton() {
+            const scrollButton = document.getElementById('scroll-to-top');
+            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
+            
+            // Показываем кнопку, если прокрутили больше 300px
+            if (scrollPosition > 300) {
+                scrollButton.classList.add('visible');
+            } else {
+                scrollButton.classList.remove('visible');
+            }
+        }
+
+        function alignTextWithButtons() {
+            const buttons = document.querySelectorAll('#buttons-container .btn'); // Все кнопки
+            const texts = document.querySelectorAll('#text-container .numeration'); // Все тексты
+            const contentContainer = document.querySelector('.content-container'); // Общий контейнер
+
+            buttons.forEach((button, index) => {
+                const buttonRect = button.getBoundingClientRect(); // Позиция кнопки
+                const containerRect = contentContainer.getBoundingClientRect(); // Позиция общего контейнера
+                const text = texts[index]; // Соответствующий текст
+
+                if (text) {
+                    // Выравниваем текст чуть выше центра кнопки
+                    const offset = 45; // На сколько пикселей выше
+                    text.style.top = `${buttonRect.top - containerRect.top + buttonRect.height / 2 - offset}px`;
+                    text.style.left = `${buttonRect.left - containerRect.left - 100}px`; // Сдвигаем текст влево
+                    text.style.opacity = 1; // Показываем текст
+                }
+            });
+        }
+
+        // Функция для переключения темы
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // При загрузке страницы
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+            document.getElementById('theme-toggle').checked = true;
+        }
+
+        // Назначаем обработчик для переключателя темы
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', toggleTheme);
+
+        // Выравниваем текст при загрузке страницы и при изменении размера окна
+        window.addEventListener('load', alignTextWithButtons);
+        window.addEventListener('resize', alignTextWithButtons);
+
+        // Назначаем обработчик события прокрутки
+        window.addEventListener('scroll', toggleScrollButton);
+
+        // Назначаем обработчик клика на кнопку
+        document.getElementById('scroll-to-top').addEventListener('click', scrollToTop);
+    </script>
+</body>
+</html>
