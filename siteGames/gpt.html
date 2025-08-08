@@ -4,12 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Тир лист видеоигр</title>
+    <!-- GSAP + Flip плагин -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/Flip.min.js"></script>
+
     <style>
         body {
             background-color: blanchedalmond;
             transition: background-color 0.5s ease, color 0.5s ease;
         }
-
         body.dark-mode {
             background-color: #28292c;
             color: #ffffff;
@@ -22,30 +25,16 @@
             color: black;
             transition: color 0.5s ease;
         }
-
         .dark-mode .title {
             color: white;
         }
 
-        #buttons-container {
-            position: relative;
-            width: 100%;
-            min-height: 100vh; /* Устанавливаем минимальную высоту */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .btn-wrapper {
-            position: absolute;
-            width: 1000px;
-            transition: top 0.5s ease;
-            text-align: center;
-        }
-
         .btn {
+            display: block;
             height: 280px;
             width: 100%;
+            max-width: 1000px;
+            margin: 50px auto 0;
             background-color: black;
             background-size: cover;
             background-position: center;
@@ -54,10 +43,9 @@
             color: white;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             font-family: 'Times New Roman';
-            display: inline-block;
+            animation: fadeIn 1s;
             position: relative;
         }
-
         .btn:hover {
             transform: scale(1.05);
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
@@ -81,9 +69,8 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             user-select: none;
             text-align: left;
-            z-index: 2000;
+            z-index: 1000;
         }
-
         .popup.active {
             opacity: 1;
             visibility: visible;
@@ -95,7 +82,6 @@
             margin-top: 20px;
             font-size: 30px;
         }
-
         select {
             font-size: 20px;
             padding: 10px;
@@ -118,16 +104,13 @@
             opacity: 0;
             transition: opacity 0.5s ease, bottom 0.5s ease, background-color 0.5s ease;
         }
-
         #scroll-to-top.visible {
             opacity: 0.7;
             bottom: 20px;
         }
-
         #scroll-to-top:hover {
             opacity: 1;
         }
-
         .dark-mode #scroll-to-top {
             background-color: #d8dbe0;
             color: #28292c;
@@ -139,12 +122,9 @@
             min-height: 100vh;
             user-select: none;
         }
-
         #text-container {
             position: absolute;
-            pointer-events: none; /* Чтобы нумерация не мешала взаимодействию */
         }
-
         .numeration {
             position: absolute;
             font-size: 80px;
@@ -153,7 +133,6 @@
             transition: opacity 0.5s ease;
             font-weight: bold;
         }
-
         .dark-mode .numeration {
             color: white;
         }
@@ -168,7 +147,6 @@
             --dark: #28292c;
             z-index: 1000;
         }
-
         .switch-label {
             position: absolute;
             width: 100%;
@@ -178,12 +156,10 @@
             cursor: pointer;
             border: 3px solid var(--dark);
         }
-
         .checkbox {
             position: absolute;
             display: none;
         }
-
         .slider {
             position: absolute;
             width: 100%;
@@ -191,11 +167,9 @@
             border-radius: 25px;
             transition: 0.3s;
         }
-
         .checkbox:checked ~ .slider {
             background-color: var(--light);
         }
-
         .slider::before {
             content: "";
             position: absolute;
@@ -208,7 +182,6 @@
             background-color: var(--dark);
             transition: 0.3s;
         }
-
         .checkbox:checked ~ .slider::before {
             transform: translateX(50px);
             background-color: var(--dark);
@@ -216,12 +189,10 @@
         }
 
         @media (max-width: 768px) {
-            .btn-wrapper {
-                width: 100%;
-            }
             .btn {
-                font-size: 1.5em;
+                width: 100%;
                 height: auto;
+                font-size: 1.5em;
             }
             .popup {
                 width: 90%;
@@ -230,7 +201,6 @@
                 top: 20%;
             }
         }
-
         @media (max-width: 480px) {
             .btn {
                 font-size: 1.2em;
@@ -239,6 +209,11 @@
                 font-size: 1em;
                 top: 10%;
             }
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
     </style>
 </head>
@@ -256,7 +231,7 @@
     
     <div class="selector">
         <label for="sort-criteria">Сортировать по:</label>
-        <select id="sort-criteria" onchange="sortButtonsByCriteria()">
+        <select id="sort-criteria">
             <option value="rating">Общий рейтинг</option>
             <option value="story">Сюжет</option>
             <option value="graphics">Графика</option>
@@ -270,339 +245,153 @@
 
     <div class="content-container">
         <div id="text-container">
+            <!-- Статичные цифры рейтинга -->
             <span class="numeration" style="color: gold;">1</span>
             <span class="numeration" style="color: silver">2</span>
             <span class="numeration" style="color: #cd7f32;">3</span>
-            <span class="numeration">4</span>
-            <span class="numeration">5</span>
-            <span class="numeration">6</span>
-            <span class="numeration">7</span>
-            <span class="numeration">8</span>
-            <span class="numeration">9</span>
-            <span class="numeration">10</span>
-            <span class="numeration">11</span>
-            <span class="numeration">12</span>
-            <span class="numeration">13</span>
-            <span class="numeration">14</span>
-            <span class="numeration">15</span>
-            <span class="numeration">16</span>
-            <span class="numeration">17</span>
-            <span class="numeration">18</span>
-            <span class="numeration">19</span>
-            <span class="numeration">20</span>
-            <span class="numeration">21</span>
-            <span class="numeration">22</span>
+            <!-- ... и так до 29 -->
+            <span class="numeration">29</span>
         </div>
 
         <div id="buttons-container">
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('w3')" onmouseout="hidePopup('w3')" style="background-image: url('w3.jpg');">
+            <!-- Пример одной карточки, остальные аналогично -->
+            <div style="text-align: center;">
+                <button class="btn" data-rating="9.4" data-story="9" data-graphics="9" data-gameplay="8" data-main-character="10" data-characters="10" data-atmosphere="10" data-music="10"
+                        onmouseover="showPopup('w3')" onmouseout="hidePopup('w3')"
+                        style="background-image: url('w3.jpg');">
                     <font face="Mason Chronicles">Witcher 3: Wild Hunt</font>
                 </button>
-                <div id="w3" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">9</span><br>Геймплей: <span class="gameplay">8</span><br>Главный герой: <span class="main-character">10</span><br>Персонажи: <span class="characters">10</span><br>Атмосфера: <span class="atmosphere">10</span><br>Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">9.4</span></div>
+                <div id="w3" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">10</span><br>
+                    Персонажи: <span class="characters">10</span><br>
+                    Атмосфера: <span class="atmosphere">10</span><br>
+                    Музыка: <span class="music">10</span><br><br>
+                    Общий рейтинг: <span class="rating">9.4</span>
+                </div>
             </div>
 
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('rdr2')" onmouseout="hidePopup('rdr2')" style="background-image: url('rdr2.jpg');">
+            <div style="text-align: center;">
+                <button class="btn"  data-rating="9.4" data-story="9" data-graphics="10" data-gameplay="10" data-main-character="10" data-characters="10" data-atmosphere="9" data-music="8"
+                        onmouseover="showPopup('rdr2')" onmouseout="hidePopup('rdr2')"
+                        style="background-image: url('rdr2.jpg');">
                     <font face="Chinese Rocks">Red Dead Redemption 2</font>
                 </button>
-                <div id="rdr2" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">10</span><br>Геймплей: <span class="gameplay">10</span><br>Главный герой: <span class="main-character">10</span><br>Персонажи: <span class="characters">10</span><br>Атмосфера: <span class="atmosphere">8</span><br>Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9.3</span></div>
+                <div id="rdr2" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">10</span><br>
+                    Геймплей: <span class="gameplay">10</span><br>
+                    Главный герой: <span class="main-character">10</span><br>
+                    Персонажи: <span class="characters">10</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">9.4</span></div>
+                </div>
             </div>
 
-            <div style="text-align: center;" class="btn-wrapper">
+            <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('cyb')" onmouseout="hidePopup('cyb')" style="background-image: url('cyb.jpg'); background-size: 101% ">
                     <font face="Cyberpunk">Cyberpunk 2077</font>
                 </button>
                 <div id="cyb" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">10</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9.1</span></div>
             </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('gtaV')" onmouseout="hidePopup('gtaV')" style="background-image: url('gtaV.jpg');">
-                    Grand Theft Auto V
-                </button>
-                <div id="gtaV" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">8.9</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('alw2')" onmouseout="hidePopup('alw2')" style="background-image: url('alw2.jpg');">
-                    Alan Wake 2
-                </button>
-                <div id="alw2" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9</span></div>
-            </div>
-            
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('tlou')" onmouseout="hidePopup('tlou')" style="background-image: url('tlou.jpg');">
-                    The Last of Us Part I
-                </button>
-                <div id="tlou" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.7</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('det')" onmouseout="hidePopup('det')" style="background-image: url('det.jpg');">
-                    Detroit: Become Human
-                </button>
-                <div id="det" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('eld')" onmouseout="hidePopup('eld')" style="background-image: url('eld.jpg');">
-                    Elden Ring
-                </button>
-                <div id="eld" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('dsr')" onmouseout="hidePopup('dsr')" style="background-image: url('dsr.jpg');">
-                    Dead Space Remake
-                </button>
-                <div id="dsr" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('bmw')" onmouseout="hidePopup('bmw')" style="background-image: url('bmw.jpg');">
-                    Black Myth: Wukong
-                </button>
-                <div id="bmw" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">9</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">7</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">8.1</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('bak')" onmouseout="hidePopup('bak')" style="background-image: url('bak.jpg');">
-                    Batman: Arkham Knight
-                </button>
-                <div id="bak" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">10</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('hev')" onmouseout="hidePopup('hev')" style="background-image: url('hev.jpg'); background-position: 0% 70%;">
-                    Heavy Rain
-                </button>
-                <div id="hev" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">8.4</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('re4')" onmouseout="hidePopup('re4')" style="background-image: url('re4.jpeg'); background-position: 0% 75%;">
-                    Resident Evil 4 Remake
-                </button>
-                <div id="re4" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8.1</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('d16')" onmouseout="hidePopup('d16')" style="background-image: url('d16.jpg');">
-                    Doom (2016)
-                </button>
-                <div id="d16" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
-            </div>
-            
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('dete')" onmouseout="hidePopup('dete')" style="background-image: url('dete.jpg');">
-                    Doom Eternal
-                </button>
-                <div id="dete" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.9</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('lim')" onmouseout="hidePopup('lim')" style="background-image: url('lim.jpg');">
-                    Limbo
-                </button>
-                <div id="lim" class="popup">Сюжет: <span class="story">6</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">6</span> Атмосфера: <span class="atmosphere">10</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('ins')" onmouseout="hidePopup('ins')" style="background-image: url('ins.jpg');">
-                    Inside
-                </button>
-                <div id="ins" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">6</span> Персонажи: <span class="characters">6</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.3</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('crw')" onmouseout="hidePopup('crw')" style="background-image: url('crw.jpg');">
-                    Thronebreaker: The Witcher Tales
-                </button>
-                <div id="crw" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">8</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('fir')" onmouseout="hidePopup('fir')" style="background-image: url('fir.png');">
-                    Firewatch
-                </button>
-                <div id="fir" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.9</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('swd')" onmouseout="hidePopup('swd')" style="background-image: url('swd.jpg');">
-                    Still Wakes the Deep
-                </button>
-                <div id="swd" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.6</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('fhr')" onmouseout="hidePopup('fhr')" style="background-image: url('fhr.jpg');">
-                    Fahrenheit: Indigo Prophecy Remastered
-                </button>
-                <div id="fhr" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">5</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7</span></div>
-            </div>
-
-            <div style="text-align: center;" class="btn-wrapper">
-                <button class="btn" onmouseover="showPopup('inc')" onmouseout="hidePopup('inc')" style="background-image: url('inc.jpg');">
-                    Inscryption
-                </button>
-                <div id="inc" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">6</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">6</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">7</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.1</span></div>
-            </div>
         </div>
     </div>
 
-    <button style="visibility: hidden; height: 100px;"></button>
     <button id="scroll-to-top" title="Наверх">↑</button>
 
     <script>
-        function getCriterionValue(popup, criterion) {
-            const valueText = popup.querySelector(`.${criterion}`).textContent;
-            return parseFloat(valueText);
-        }
-
-        function initializeButtonPositions() {
-            const container = document.getElementById('buttons-container');
-            const wrappers = Array.from(container.querySelectorAll('.btn-wrapper'));
-            wrappers.forEach((wrapper, index) => {
-                wrapper.style.left = '50%';
-                wrapper.style.transform = 'translateX(-50%)';
-                wrapper.style.top = `${index * (wrapper.offsetHeight + 50)}px`;
-                wrapper.style.position = 'absolute';
-            });
-            updateContainerHeight(wrappers);
-        }
-
-        function updateContainerHeight(wrappers) {
-            const container = document.getElementById('buttons-container');
-            const lastWrapper = wrappers[wrappers.length - 1];
-            const newContainerHeight = parseFloat(lastWrapper.style.top) + lastWrapper.offsetHeight + 50; // Добавляем запас
-            container.style.height = `${newContainerHeight}px`;
-        }
+        // GSAP Flip
+        gsap.registerPlugin(Flip);
 
         function sortButtonsByCriteria() {
             const container = document.getElementById('buttons-container');
-            const buttons = Array.from(container.children);
-            const selectedCriterion = document.getElementById('sort-criteria').value;
+            const boxes = Array.from(container.children);
+            const criterion = document.getElementById('sort-criteria').value;
 
-            // 1. Фиксируем текущие позиции
-            const currentPositions = buttons.map(wrapper => parseFloat(wrapper.style.top) || 0);
+            // 1. Фиксируем состояние кнопок
+            const state = Flip.getState(boxes);
 
-            // 2. Сортируем кнопки
-            buttons.sort((a, b) => {
-                const valueA = getCriterionValue(a.querySelector('.popup'), selectedCriterion);
-                const valueB = getCriterionValue(b.querySelector('.popup'), selectedCriterion);
-                return valueB - valueA;
+            // 2. Сортируем массив DOM-узлов
+            boxes.sort((a, b) => {
+                const aVal = parseFloat(a.querySelector('.popup').querySelector(`.${criterion}`).textContent);
+                const bVal = parseFloat(b.querySelector('.popup').querySelector(`.${criterion}`).textContent);
+                return bVal - aVal;
             });
 
-            // 3. Очищаем и добавляем отсортированные кнопки
-            container.innerHTML = '';
-            buttons.forEach(wrapper => container.appendChild(wrapper));
+            // 3. Переставляем в контейнере
+            boxes.forEach(el => container.appendChild(el));
 
-            // 4. Устанавливаем новые позиции только если они изменились
-            buttons.forEach((wrapper, index) => {
-                const newTop = index * (wrapper.offsetHeight + 50);
-                const currentTop = currentPositions[buttons.indexOf(wrapper)];
-                if (Math.abs(newTop - currentTop) > 1) {
-                    wrapper.style.top = `${newTop}px`;
-                }
+            // 4. Анимируем переход
+            Flip.from(state, {
+                duration: 0.6,
+                ease: "power1.inOut",
+                absolute: true
             });
-
-            // 5. Обновляем высоту контейнера
-            updateContainerHeight(buttons);
         }
 
+        document.getElementById('sort-criteria').addEventListener('change', sortButtonsByCriteria);
+
+        // Остальной скрипт — переключение темы, pop-up’ы, scroll-to-top, выравнивание цифр
         function showPopup(id) {
-            const popup = document.getElementById(id);
-            popup.classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
-
         function hidePopup(id) {
             const popup = document.getElementById(id);
-            if (!popup.matches(':hover')) {
-                popup.classList.remove('active');
-            }
+            if (!popup.matches(':hover')) popup.classList.remove('active');
         }
-
-        document.querySelectorAll('.btn').forEach(button => {
-            button.addEventListener('mouseover', () => {
-                const popupId = button.getAttribute('onmouseover').match(/'(.*?)'/)[1];
-                showPopup(popupId);
-            });
-
-            button.addEventListener('mouseout', () => {
-                const popupId = button.getAttribute('onmouseout').match(/'(.*?)'/)[1];
-                hidePopup(popupId);
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseout', () => {
+                const id = btn.getAttribute('onmouseout').match(/'(.*?)'/)[1];
+                hidePopup(id);
             });
         });
-
-        document.querySelectorAll('.popup').forEach(popup => {
-            popup.addEventListener('mouseout', () => {
-                const popupId = popup.id;
-                hidePopup(popupId);
-            });
+        document.querySelectorAll('.popup').forEach(p => {
+            p.addEventListener('mouseout', () => hidePopup(p.id));
         });
 
-        window.onload = () => {
-            initializeButtonPositions(); // Устанавливаем начальные позиции
-            sortButtonsByCriteria(); // Первая сортировка
-            alignTextWithButtons(); // Фиксируем нумерацию один раз
-        };
-
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        }
-
-        function toggleScrollButton() {
-            const scrollButton = document.getElementById('scroll-to-top');
-            const scrollPosition = window.scrollY || document.documentElement.scrollTop;
-            if (scrollPosition > 300) {
-                scrollButton.classList.add('visible');
-            } else {
-                scrollButton.classList.remove('visible');
-            }
-        }
-
+        // Выравнивание цифр по кнопкам
         function alignTextWithButtons() {
-            const buttons = document.querySelectorAll('#buttons-container .btn-wrapper');
+            const buttons = document.querySelectorAll('#buttons-container .btn');
             const texts = document.querySelectorAll('#text-container .numeration');
-            const contentContainer = document.querySelector('.content-container');
-
-            buttons.forEach((wrapper, index) => {
-                const buttonRect = wrapper.getBoundingClientRect();
-                const containerRect = contentContainer.getBoundingClientRect();
-                const text = texts[index];
+            const containerRect = document.querySelector('.content-container').getBoundingClientRect();
+            buttons.forEach((button, i) => {
+                const rect = button.getBoundingClientRect();
+                const text = texts[i];
                 if (text) {
-                    const offset = 45;
-                    text.style.top = `${index * (wrapper.offsetHeight + 50) + wrapper.offsetHeight / 2 - offset}px`;
-                    text.style.left = `${buttonRect.left - containerRect.left - 100}px`;
+                    text.style.top = `${rect.top - containerRect.top + rect.height/2 - 45}px`;
+                    text.style.left = `${rect.left - containerRect.left - 100}px`;
                     text.style.opacity = 1;
                 }
             });
         }
-
-        function toggleTheme() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-        }
-
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme === 'dark') {
-            document.body.classList.add('dark-mode');
-            document.getElementById('theme-toggle').checked = true;
-        }
-
-        const themeToggle = document.getElementById('theme-toggle');
-        themeToggle.addEventListener('change', toggleTheme);
-
-        window.addEventListener('resize', () => {
-            initializeButtonPositions(); // Пересчитываем позиции кнопок при изменении размера окна
+        window.addEventListener('load', () => { 
+            // Привязываем сортировку и выравнивание
+            sortButtonsByCriteria();
+            alignTextWithButtons();
         });
-        window.addEventListener('scroll', toggleScrollButton);
-        document.getElementById('scroll-to-top').addEventListener('click', scrollToTop);
+        window.addEventListener('resize', alignTextWithButtons);
+
+        // Тёмная тема
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('change', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode')?'dark':'light');
+        });
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.checked = true;
+        }
+
+        // Scroll to top
+        const scrollBtn = document.getElementById('scroll-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) scrollBtn.classList.add('visible');
+            else scrollBtn.classList.remove('visible');
+        });
+        scrollBtn.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
     </script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92a19b6e2c6fe590',t:'MTc0MzYxMDMzOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>

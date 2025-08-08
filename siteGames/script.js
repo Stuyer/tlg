@@ -19,7 +19,14 @@ function sortButtonsByCriteria() {
     // Очищаем контейнер и добавляем отсортированные кнопки
     container.innerHTML = '';
     buttons.forEach(button => container.appendChild(button));
-}
+
+    // buttons.forEach((button, index) => {
+    //     setTimeout(() => {
+    //       container.appendChild(button);
+    //       alignTextWithButtons();
+    //     }, 300 + index * 150);
+    //   });
+} 
 
 // Функции для показа/скрытия попапа
 function showPopup(id) {
@@ -100,6 +107,7 @@ function alignTextWithButtons() {
     });
 }
 
+
 // Функция для переключения темы
 function toggleTheme() {
     document.body.classList.toggle('dark-mode');
@@ -119,6 +127,7 @@ themeToggle.addEventListener('change', toggleTheme);
 
 // Выравниваем текст при загрузке страницы и при изменении размера окна
 window.addEventListener('load', alignTextWithButtons);
+
 window.addEventListener('resize', alignTextWithButtons);
 
 // Назначаем обработчик события прокрутки

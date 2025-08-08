@@ -40,6 +40,7 @@
             color: white;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             font-family: 'Times New Roman';
+            animation: fadeIn 1s;
         }
 
         .btn:hover {
@@ -223,6 +224,15 @@
                 top: 10%; /* Еще выше для маленьких экранов */
             }
         }
+
+        @keyframes fadeIn {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
     </style>
 </head>
 <body>
@@ -276,6 +286,15 @@
             <span class="numeration">21</span>
             <span class="numeration">22</span>
             <span class="numeration">23</span>
+            <span class="numeration">24</span>
+            <span class="numeration">25</span>
+            <span class="numeration">26</span>
+            <span class="numeration">27</span>
+            <span class="numeration">28</span>
+            <span class="numeration">29</span>
+            <span class="numeration">30</span>
+            <span class="numeration">31</span>
+            <span class="numeration">32</span>
         </div>
 
         <div id="buttons-container">
@@ -283,161 +302,479 @@
                 <button class="btn" onmouseover="showPopup('w3')" onmouseout="hidePopup('w3')" style="background-image: url('w3.jpg');">
                     <font face="Mason Chronicles">Witcher 3: Wild Hunt</font>
                 </button>
-                <div id="w3" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">9</span><br>Геймплей: <span class="gameplay">8</span><br>Главный герой: <span class="main-character">10</span><br>Персонажи: <span class="characters">10</span><br>Атмосфера: <span class="atmosphere">10</span><br>Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">9.4</span></div>
+                <div id="w3" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">10</span><br>
+                    Персонажи: <span class="characters">10</span><br>
+                    Атмосфера: <span class="atmosphere">10</span><br>
+                    Музыка: <span class="music">10</span><br><br>
+                    Общий рейтинг: <span class="rating">9.4</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('rdr2')" onmouseout="hidePopup('rdr2')" style="background-image: url('rdr2.jpg');">
                     <font face="Chinese Rocks">Red Dead Redemption 2</font>
                 </button>
-                <div id="rdr2" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">10</span><br>Геймплей: <span class="gameplay">10</span><br>Главный герой: <span class="main-character">10</span><br>Персонажи: <span class="characters">10</span><br>Атмосфера: <span class="atmosphere">9</span><br>Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9.4</span></div>
+                <div id="rdr2" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">10</span><br>
+                    Геймплей: <span class="gameplay">10</span><br>
+                    Главный герой: <span class="main-character">10</span><br>
+                    Персонажи: <span class="characters">10</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">9.4</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('cyb')" onmouseout="hidePopup('cyb')" style="background-image: url('cyb.jpg'); background-size: 101% ">
                     <font face="Cyberpunk">Cyberpunk 2077</font>
                 </button>
-                <div id="cyb" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">10</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9.1</span></div>
+                <div id="cyb" class="popup">
+                    Сюжет: <span class="story">10</span><br>
+                    Графика: <span class="graphics">10</span><br>
+                    Геймплей: <span class="gameplay">10</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">9</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">9.1</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('gtaV')" onmouseout="hidePopup('gtaV')" style="background-image: url('gtaV.jpg');">
                     Grand Theft Auto V
                 </button>
-                <div id="gtaV" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">8.9</span></div>
+                <div id="gtaV" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">9</span><br>
+                    Персонажи: <span class="characters">9</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">8.9</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('alw2')" onmouseout="hidePopup('alw2')" style="background-image: url('alw2.jpg');">
                     Alan Wake 2
                 </button>
-                <div id="alw2" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">9</span></div>
+                <div id="alw2" class="popup">
+                    Сюжет: <span class="story">10</span><br>
+                    Графика: <span class="graphics">10</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">9</span><br>
+                    Персонажи: <span class="characters">9</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">9</span></div>
             </div>
             
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('tlou')" onmouseout="hidePopup('tlou')" style="background-image: url('tlou.jpg');">
                     The Last of Us Part I
                 </button>
-                <div id="tlou" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">9</span><br> Геймплей: <span class="gameplay">10</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">9.1</span></div>
+                <div id="tlou" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">10</span><br>
+                    Главный герой: <span class="main-character">9</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">10</span><br><br>
+                    Общий рейтинг: <span class="rating">9.1</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('det')" onmouseout="hidePopup('det')" style="background-image: url('det.jpg');">
                     Detroit: Become Human
                 </button>
-                <div id="det" class="popup">Сюжет: <span class="story">9</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
+                <div id="det" class="popup">
+                    Сюжет: <span class="story">9</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">10</span><br><br>
+                    Общий рейтинг: <span class="rating">8.4</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('eld')" onmouseout="hidePopup('eld')" style="background-image: url('eld.jpg');">
                     Elden Ring
                 </button>
-                <div id="eld" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">10</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
+                <div id="eld" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">10</span><br><br>
+                    Общий рейтинг: <span class="rating">8.4</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('dsr')" onmouseout="hidePopup('dsr')" style="background-image: url('dsr.jpg');">
                     Dead Space Remake
                 </button>
-                <div id="dsr" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">10</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8.3</span></div>
+                <div id="dsr" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">10</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">8.3</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('bmw')" onmouseout="hidePopup('bmw')" style="background-image: url('bmw.jpg');">
                     Black Myth: Wukong
                 </button>
-                <div id="bmw" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">9</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">7</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">8.1</span></div>
+                <div id="bmw" class="popup">Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">7</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">8.1</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('bak')" onmouseout="hidePopup('bak')" style="background-image: url('bak.jpg');">
                     Batman: Arkham Knight
                 </button>
-                <div id="bak" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">10</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8</span></div>
+                <div id="bak" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">9</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">10</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">8.1</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('hev')" onmouseout="hidePopup('hev')" style="background-image: url('hev.jpg'); background-position: 0% 70%;">
                     Heavy Rain
                 </button>
-                <div id="hev" class="popup">Сюжет: <span class="story">10</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">9</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">8</span><br><br>Общий рейтинг: <span class="rating">8.4</span></div>
+                <div id="hev" class="popup">
+                    Сюжет: <span class="story">10</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">7</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">8.3</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('re4')" onmouseout="hidePopup('re4')" style="background-image: url('re4.jpeg'); background-position: 0% 75%;">
                     Resident Evil 4 Remake
                 </button>
-                <div id="re4" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">9</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">8.1</span></div>
+                <div id="re4" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.9</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('d16')" onmouseout="hidePopup('d16')" style="background-image: url('d16.jpg');">
                     Doom (2016)
                 </button>
-                <div id="d16" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
+                <div id="d16" class="popup">
+                    Сюжет: <span class="story">7</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">7.9</span></div>
             </div>
             
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('dete')" onmouseout="hidePopup('dete')" style="background-image: url('dete.jpg');">
                     Doom Eternal
                 </button>
-                <div id="dete" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.9</span></div>
+                <div id="dete" class="popup">
+                    Сюжет: <span class="story">7</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">8</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('lim')" onmouseout="hidePopup('lim')" style="background-image: url('lim.jpg');">
                     Limbo
                 </button>
-                <div id="lim" class="popup">Сюжет: <span class="story">6</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">6</span> Атмосфера: <span class="atmosphere">10</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
+                <div id="lim" class="popup">
+                    Сюжет: <span class="story">6</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">6</span><br>
+                    Атмосфера: <span class="atmosphere">10</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">7.7</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('ins')" onmouseout="hidePopup('ins')" style="background-image: url('ins.jpg');">
                     Inside
                 </button>
-                <div id="ins" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">6</span> Персонажи: <span class="characters">6</span> Атмосфера: <span class="atmosphere">9</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.3</span></div>
+                <div id="ins" class="popup">
+                    Сюжет: <span class="story">7</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">6</span><br>
+                    Персонажи: <span class="characters">6</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.3</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('crw')" onmouseout="hidePopup('crw')" style="background-image: url('crw.jpg');">
                     Thronebreaker: The Witcher Tales
                 </button>
-                <div id="crw" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">8</span></div>
+                <div id="crw" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">8</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('fir')" onmouseout="hidePopup('fir')" style="background-image: url('fir.png');">
                     Firewatch
                 </button>
-                <div id="fir" class="popup">Сюжет: <span class="story">7</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">8</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">9</span><br><br>Общий рейтинг: <span class="rating">7.7</span></div>
+                <div id="fir" class="popup">
+                    Сюжет: <span class="story">7</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">7.6</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('swd')" onmouseout="hidePopup('swd')" style="background-image: url('swd.jpg');">
                     Still Wakes the Deep
                 </button>
-                <div id="swd" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">8</span><br> Геймплей: <span class="gameplay">8</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.6</span></div>
+                <div id="swd" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.6</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('fhr')" onmouseout="hidePopup('fhr')" style="background-image: url('fhr.jpg');">
                     Fahrenheit: Indigo Prophecy Remastered
                 </button>
-                <div id="fhr" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">5</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">7</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7</span></div>
+                <div id="fhr" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">5</span><br>
+                    Геймплей: <span class="gameplay">7</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('inc')" onmouseout="hidePopup('inc')" style="background-image: url('inc.jpg');">
                     Inscryption
                 </button>
-                <div id="inc" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">6</span><br> Геймплей: <span class="gameplay">9</span><br> Главный герой: <span class="main-character">6</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">7</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.1</span></div>
+                <div id="inc" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">6</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">6</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">7</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.1</span></div>
             </div>
 
             <div style="text-align: center;">
                 <button class="btn" onmouseover="showPopup('mf2')" onmouseout="hidePopup('mf2')" style="background-image: url('mf2.png');">
                     Mafia II
                 </button>
-                <div id="mf2" class="popup">Сюжет: <span class="story">8</span><br>Графика: <span class="graphics">7</span><br> Геймплей: <span class="gameplay">7</span><br> Главный герой: <span class="main-character">8</span> Персонажи: <span class="characters">7</span> Атмосфера: <span class="atmosphere">8</span> Музыка: <span class="music">7</span><br><br>Общий рейтинг: <span class="rating">7.4</span></div>
+                <div id="mf2" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">7</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.4</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('hss')" onmouseout="hidePopup('hss')" style="background-image: url('hss.jpg');">
+                    Hellblade: Senua's Sacrifice
+                </button>
+                <div id="hss" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('tlou2')" onmouseout="hidePopup('tlou2')" style="background-image: url('tlou2.jpg');">
+                    The Last of Us Part II
+                </button>
+                <div id="tlou2" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">10</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">9</span><br><br>
+                    Общий рейтинг: <span class="rating">8.7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('PTI')" onmouseout="hidePopup('PTI')" style="background-image: url('PTI.jpg');">
+                    A Plague Tale: Innocence
+                </button>
+                <div id="PTI" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">8</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.9</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('atm')" onmouseout="hidePopup('atm')" style="background-image: url('atm.jpg');">
+                    Atomic Heart
+                </button>
+                <div id="atm" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">9</span><br>
+                    Геймплей: <span class="gameplay">9</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">7</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('jc3')" onmouseout="hidePopup('jc3')" style="background-image: url('jc3.jpg'); background-position: 0% 30%;">
+                    Just Cause 3
+                </button>
+                <div id="jc3" class="popup">
+                    Сюжет: <span class="story">7</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">7</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">7.6</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('out')" onmouseout="hidePopup('out')" style="background-image: url('out.jpg'); background-position: 0% 30%;">
+                    Outlast
+                </button>
+                <div id="out" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">7</span><br><br>
+                    Общий рейтинг: <span class="rating">7.7</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('out2')" onmouseout="hidePopup('out2')" style="background-image: url('out2.jpg');">
+                    Outlast 2
+                </button>
+                <div id="out2" class="popup">
+                    Сюжет: <span class="story">7</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">7</span><br>
+                    Персонажи: <span class="characters">8</span><br>
+                    Атмосфера: <span class="atmosphere">10</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">8</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('rev')" onmouseout="hidePopup('rev')" style="background-image: url('rev.jpg');">
+                    Resident Evil Village
+                </button>
+                <div id="rev" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">8</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">9</span><br>
+                    Атмосфера: <span class="atmosphere">9</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">8.3</span></div>
+            </div>
+
+            <div style="text-align: center;">
+                <button class="btn" onmouseover="showPopup('reb')" onmouseout="hidePopup('reb')" style="background-image: url('reb.jpg');">
+                    Resident Evil 7: Biohazard
+                </button>
+                <div id="reb" class="popup">
+                    Сюжет: <span class="story">8</span><br>
+                    Графика: <span class="graphics">7</span><br>
+                    Геймплей: <span class="gameplay">8</span><br>
+                    Главный герой: <span class="main-character">8</span><br>
+                    Персонажи: <span class="characters">7</span><br>
+                    Атмосфера: <span class="atmosphere">10</span><br>
+                    Музыка: <span class="music">8</span><br><br>
+                    Общий рейтинг: <span class="rating">8</span></div>
             </div>
         </div>
     </div>
