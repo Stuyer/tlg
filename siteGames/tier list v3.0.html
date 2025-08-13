@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Тир-лист</title>
+<style>
+  :root{
+    --bg: blanchedalmond;
+    --text: #000;
+    --card-w: 1000px;
+    --card-h: 280px;
+  }
+  body{ background:var(--bg); color:var(--text); font-family: Inter, system-ui, sans-serif; transition: background .3s, color .3s; margin:0; padding:30px 20px;}
+  body.dark{ --bg:#28292c; --text:#fff; }
+
+  .header{ text-align:center; margin-bottom:18px; }
+  .title{ font-size:2.8rem; font-weight:700; margin-bottom:8px; }
+  .controls{ display:flex; gap:12px; justify-content:center; align-items:center; flex-wrap:wrap; margin-bottom:18px; }
+
+  select{ font-size:20px; padding:10px; border-radius:10px; }
+
+  /* Grid / layout */
+  #grid{ display:flex; flex-wrap:wrap; gap:20px; justify-content:center; align-items:flex-start; }
+
+  /* wrapper which will be transformed during FLIP */
+  .card-wrap{
+    display:inline-block;
+    /* make transform not affect layout for siblings during animation */
+    will-change: transform;
+    margin:8px;
+  }
+
+  .card{
+    width: min(var(--card-w), 95vw);
+    max-width: var(--card-w);
+    height: var(--card-h);
+    border-radius:18px;
+    overflow:hidden;
+    position:relative;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+    cursor:pointer;
+    background-size:cover;
+    background-position:center;
+    transition: transform .16s ease, box-shadow .16s ease;
+    display:flex;
+    align-items:flex-end;
+    padding:18px;
+    color: #fff;
+  }
+  .card:hover{ transform: translateY(-6px); box-shadow: 0 14px 30px rgba(0,0,0,0.28); }
+
+  .card .title{
+    font-size:2rem;
+    text-shadow: none;
+    padding:6px 10px; border-radius:8px;
+    background: rgba(0, 0, 0, 0.45);
+    font-weight: bold;
+    user-select: none;
+  }
+
+  .popup {
+    position:absolute;
+    left:12px;
+    top:12px;
+    background: rgba(0,0,0,0.6);
+    color:#fff;
+    padding:16px 20px;
+    border-radius:12px;
+    font-size:1.1rem;
+    display:none;
+    pointer-events:none;
+    user-select:none;
+    max-width: 300px;
+  }
+  .card:hover .popup { display:block; pointer-events:auto; }
+
+  .badge{
+    position:absolute;
+    right:12px;
+    top:12px;
+    background: rgba(0,0,0,0.6);
+    padding:8px 12px;
+    border-radius:12px;
+    font-weight:700;
+    font-size:16px;
+    user-select:none;
+  }
+
+.toggle-switch {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 100px;
+    height: 50px;
+    --light: #d8dbe0;
+    --dark: #28292c;
+    z-index: 1000;
+}
+.switch-label {
+    position: absolute;
+    width: 100%;
+    height: 45px;
+    background-color: var(--dark);
+    border-radius: 25px;
+    cursor: pointer;
+    border: 3px solid var(--dark);
+}
+.controls label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    user-select:none;
+}
+.controls select {
+    font-size: 1.1rem;
+    padding: 10px;
+}
+.checkbox {
+    position: absolute;
+    display: none;
+}
+.slider {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 25px;
+    transition: 0.3s;
+}
+.checkbox:checked ~ .slider {
+    background-color: var(--light);
+}
+.slider::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    box-shadow: inset 12px -4px 0px 0px var(--light);
+    background-color: var(--dark);
+    transition: 0.3s;
+}
+.checkbox:checked ~ .slider::before {
+    transform: translateX(50px);
+    background-color: var(--dark);
+    box-shadow: none;
+}
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+#search {
+  padding-right: 28px; /* место для крестика */
+}
+
+#clear-search {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  cursor: pointer;
+  color: #888;
+  display: none; /* изначально скрыт */
+  user-select: none;
+}
+
+#clear-search:hover {
+  color: red;
+}
+
+/* Кнопка наверх */
+#scroll-to-top {
+    position: fixed;
+    bottom: -60px;
+    right: 20px;
+    z-index: 1000;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background-color: #333;
+    color: white;
+    font-size: 22px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.5s ease, bottom 0.5s ease, background-color 0.5s ease;
+}
+#scroll-to-top.visible {
+    opacity: 0.7;
+    bottom: 20px;
+}
+#scroll-to-top:hover {
+    opacity: 1;
+}
+/* Модальное окно */
+#game-modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+#modal-review {
+  text-align: justify; /* выравнивание по ширине */
+  text-justify: inter-word; /* равномерные пробелы */
+  line-height: 1.5; /* удобочитаемость */
+}
+
+#modal-review {
+  word-wrap: break-word;
+  overflow-wrap: anywhere; /* принудительный перенос */
+}
+
+#game-modal p {
+  font-size: 1.5rem;
+  line-height: 1.6;
+}
+
+#game-modal.show {
+  animation: fadeInBg 0.2s ease forwards;
+}
+
+#game-modal .modal-content {
+  background: var(--bg);
+  color: var(--text);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 900px;
+  width: 95%;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+  transition: background 0.3s, color 0.3s;
+  font-size: 1.25rem;
+  transform: scale(0.8);
+  opacity: 0;
+}
+
+#game-modal.show .modal-content {
+  animation: popIn 0.35s ease forwards;
+}
+
+#game-modal h2 {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+#game-modal .criteria {
+  font-size: 1.3rem; /* немного больше шрифт */
+  margin-top: 15px;
+}
+
+#game-modal .close-btn {
+  position: absolute;
+  top: 20px;
+  right: 28px;
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--text);
+  cursor: pointer;
+}
+
+#game-modal.fade-out {
+  animation: fadeOutBg 0.2s ease forwards;
+}
+
+@keyframes fadeOutBg {
+  from { background: rgba(0,0,0,0.6); }
+  to { background: rgba(0,0,0,0); }
+}
+
+
+@keyframes fadeInBg {
+  from { background: rgba(0,0,0,0); }
+  to { background: rgba(0,0,0,0.6); }
+}
+
+@keyframes popIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.card .title {
+  backdrop-filter: blur(3px);
+}
+
+body.dark #scroll-to-top {
+    background-color: #d8dbe0;
+    color: #28292c;
+}
+.popup div {
+  margin: 2px 0;
+}
+.popup div span {
+  font-weight: bold;
+}
+
+.controls input[type="text"] {
+    padding: 8px 10px;
+    font-size: 1rem;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.6);
+    background-color: #fff !important; /* всегда белый фон */
+    color: #000 !important;            /* всегда чёрный текст */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+body.dark .controls input[type="text"] {
+    background-color: #222; /* чуть светлее, чем #000 */
+    color: white;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.controls input[type="text"]:focus {
+    outline: 2px solid dodgerblue;
+    outline-offset: 1px;
+}
+.rank {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 4px;
+    color: #ffd700;
+    text-align: center;
+}
+.card-wrap[data-id="cyb"] .card {
+    background-size: 110%;
+}
+.card-wrap[data-id="hev"] .card {
+    background-position: 0% 80%;
+}
+.card-wrap[data-id="out"] .card {
+    background-position: 0% 10%;
+}
+.card-wrap[data-id="jc3"] .card {
+    background-position: 0% 10%;
+}
+.card-wrap[data-id="alw2"] .card {
+    background-position: 0% 30%;
+}
+.card-wrap[data-id="tlou"] .card {
+    background-position: 0% 25%;
+}
+
+  /* responsive tweaks */
+  @media (max-width:1100px){
+    :root{ --card-w: 820px; --card-h: 240px; }
+  }
+  @media (max-width:700px){
+    :root{ --card-w: 92vw; --card-h: 180px; }
+    .card .title{ font-size:1.1rem; }
+  }
+
+</style>
+</head>
+<body>
+    <!-- Переключатель темы -->
+<div class="toggle-switch">
+  <label class="switch-label">
+    <input type="checkbox" class="checkbox" id="theme-toggle">
+    <span class="slider"></span>
+  </label>
+</div>
+
+<!-- Кнопка "Наверх" -->
+<button id="scroll-to-top" title="Наверх">↑</button>
+
+  <div class="header">
+    <div class="title">Тир-лист видеоигр, рейтинг при наведении</div>
+    <div class="controls">
+  <label>Сортировать по:
+    <select id="criterion">
+      <option value="rating">Общий рейтинг</option>
+      <option value="story">Сюжет</option>
+      <option value="graphics">Графика</option>
+      <option value="gameplay">Геймплей</option>
+      <option value="main_character">Главный герой</option>
+      <option value="characters">Персонажи</option>
+      <option value="atmosphere">Атмосфера</option>
+      <option value="music">Музыка</option>
+    </select>
+  </label>
+  
+  <label>Поиск:
+  <div class="search-wrapper">
+    <input type="text" id="search" placeholder="Введите название игры">
+    <span id="clear-search" title="Очистить">×</span>
+  </div>
+</label>
+
+
+    </div>
+  </div>
+
+  <main>
+    <div id="grid" aria-live="polite"></div>
+  </main>
+
+  <div id="game-modal">
+  <div class="modal-content">
+    <span class="close-btn">&times;</span>
+    <h2 id="modal-title"></h2>
+    <div id="modal-ratings"></div>
+    <p id="modal-review"></p>
+  </div>
+</div>
+
+<script>
+
+const GAMES = [
+{ id: "w3", title: "Witcher 3: Wild Hunt", image: "w3.jpg", ratings: {"story":10,"graphics":9,"gameplay":8,"main_character":10,"characters":10,"atmosphere":10,"music":10,"rating":9.4} },
+{ id: "rdr2", title: "Red Dead Redemption 2", image: "rdr2.jpg", ratings: {"story":9,"graphics":10,"gameplay":10,"main_character":10,"characters":10,"atmosphere":9,"music":8,"rating":9.4} },
+{ id: "cyb", title: "Cyberpunk 2077", image: "cyb.jpg", ratings: {"story":10,"graphics":10,"gameplay":10,"main_character":8,"characters":9,"atmosphere":9,"music":8,"rating":9.1} },
+{ id: "gtaV", title: "Grand Theft Auto V", image: "gtaV.jpg", ratings: {"story":9,"graphics":8,"gameplay":9,"main_character":9,"characters":9,"atmosphere":9,"music":9,"rating":8.9} },
+{ id: "alw2", title: "Alan Wake 2", image: "alw2.jpg", ratings: {"story":10,"graphics":10,"gameplay":8,"main_character":9,"characters":9,"atmosphere":9,"music":8,"rating":9.0} },
+{ id: "tlou", title: "The Last of Us Part I", image: "tlou.jpg", ratings: {"story":9,"graphics":9,"gameplay":10,"main_character":9,"characters":8,"atmosphere":9,"music":10,"rating":9.1} },
+{ id: "det", title: "Detroit: Become Human", image: "det.jpg", ratings: {"story":9,"graphics":8,"gameplay":8,"main_character":8,"characters":8,"atmosphere":8,"music":10,"rating":8.4} },
+{ id: "eld", title: "Elden Ring", image: "eld.jpg", ratings: {"story":8,"graphics":9,"gameplay":8,"main_character":7,"characters":8,"atmosphere":9,"music":10,"rating":8.4} },
+{ id: "dsr", title: "Dead Space Remake", image: "dsr.jpg", ratings: {"story":8,"graphics":10,"gameplay":9,"main_character":8,"characters":7,"atmosphere":9,"music":7,"rating":8.3} },
+{ id: "bmw", title: "Black Myth: Wukong", image: "bmw.jpg", ratings: {"story":8,"graphics":9,"gameplay":9,"main_character":8,"characters":8,"atmosphere":7,"music":8,"rating":8.1} },
+{ id: "bak", title: "Batman: Arkham Knight", image: "bak.jpg", ratings: {"story":8,"graphics":8,"gameplay":8,"main_character":9,"characters":7,"atmosphere":10,"music":7,"rating":8.1} },
+{ id: "hev", title: "Heavy Rain", image: "hev.jpg", ratings: {"story":10,"graphics":8,"gameplay":7,"main_character":8,"characters":8,"atmosphere":9,"music":8,"rating":8.3} },
+{ id: "re4", title: "Resident Evil 4 Remake", image: "re4.jpeg", ratings: {"story":8,"graphics":8,"gameplay":8,"main_character":8,"characters":8,"atmosphere":8,"music":7,"rating":7.9} },
+{ id: "d16", title: "Doom (2016)", image: "d16.jpg", ratings: {"story":7,"graphics":7,"gameplay":9,"main_character":8,"characters":7,"atmosphere":8,"music":9,"rating":7.9} },
+{ id: "dete", title: "Doom Eternal", image: "dete.jpg", ratings: {"story":7,"graphics":8,"gameplay":9,"main_character":8,"characters":7,"atmosphere":8,"music":9,"rating":8.0} },
+{ id: "lim", title: "Limbo", image: "lim.jpg", ratings: {"story":6,"graphics":7,"gameplay":9,"main_character":7,"characters":6,"atmosphere":10,"music":9,"rating":7.7} },
+{ id: "ins", title: "Inside", image: "ins.jpg", ratings: {"story":7,"graphics":7,"gameplay":9,"main_character":6,"characters":6,"atmosphere":9,"music":7,"rating":7.3} },
+{ id: "crw", title: "Thronebreaker: The Witcher Tales", image: "crw.jpg", ratings: {"story":8,"graphics":7,"gameplay":9,"main_character":7,"characters":8,"atmosphere":8,"music":9,"rating":8.0} },
+{ id: "fir", title: "Firewatch", image: "fir.png", ratings: {"story":7,"graphics":7,"gameplay":8,"main_character":7,"characters":7,"atmosphere":8,"music":9,"rating":7.6} },
+{ id: "swd", title: "Still Wakes the Deep", image: "swd.jpg", ratings: {"story":8,"graphics":8,"gameplay":8,"main_character":7,"characters":7,"atmosphere":8,"music":7,"rating":7.6} },
+{ id: "fhr", title: "Fahrenheit: Indigo Prophecy Remastered", image: "fhr.jpg", ratings: {"story":8,"graphics":5,"gameplay":7,"main_character":7,"characters":7,"atmosphere":8,"music":7,"rating":7.0} },
+{ id: "inc", title: "Inscryption", image: "inc.jpg", ratings: {"story":8,"graphics":6,"gameplay":9,"main_character":6,"characters":7,"atmosphere":7,"music":7,"rating":7.1} },
+{ id: "mf2", title: "Mafia II", image: "mf2.png", ratings: {"story":8,"graphics":7,"gameplay":7,"main_character":8,"characters":7,"atmosphere":8,"music":7,"rating":7.4} },
+{ id: "hss", title: "Hellblade: Senua's Sacrifice", image: "hss.jpg", ratings: {"story":8,"graphics":8,"gameplay":8,"main_character":7,"characters":7,"atmosphere":9,"music":7,"rating":7.7} },
+{ id: "tlou2", title: "The Last of Us Part II", image: "tlou2.jpg", ratings: {"story":8,"graphics":9,"gameplay":10,"main_character":8,"characters":8,"atmosphere":9,"music":9,"rating":8.7} },
+{ id: "PTI", title: "A Plague Tale: Innocence", image: "PTI.jpg", ratings: {"story":8,"graphics":8,"gameplay":8,"main_character":8,"characters":8,"atmosphere":8,"music":7,"rating":7.9} },
+{ id: "atm", title: "Atomic Heart", image: "atm.jpg", ratings: {"story":8,"graphics":9,"gameplay":9,"main_character":7,"characters":7,"atmosphere":7,"music":7,"rating":7.7} },
+{ id: "jc3", title: "Just Cause 3", image: "jc3.jpg", ratings: {"story":7,"graphics":8,"gameplay":8,"main_character":8,"characters":7,"atmosphere":7,"music":8,"rating":7.6} },
+{ id: "out", title: "Outlast", image: "out.jpg", ratings: {"story":8,"graphics":7,"gameplay":8,"main_character":7,"characters":8,"atmosphere":9,"music":7,"rating":7.7} },
+{ id: "out2", title: "Outlast 2", image: "out2.jpg", ratings: {"story":7,"graphics":8,"gameplay":8,"main_character":7,"characters":8,"atmosphere":10,"music":8,"rating":8.0} },
+{ id: "rev", title: "Resident Evil Village", image: "rev.jpg", ratings: {"story":8,"graphics":8,"gameplay":8,"main_character":8,"characters":9,"atmosphere":9,"music":8,"rating":8.3} },
+{ id: "reb", title: "Resident Evil 7: Biohazard", image: "reb.jpg", ratings: {"story":8,"graphics":7,"gameplay":8,"main_character":8,"characters":7,"atmosphere":10,"music":8,"rating":8.0} }
+];
+
+const REVIEWS = {
+  "w3": `Ведьмак 3 — это потрясающая RPG с огромным впечатляющим лором, красивым миром, 
+  качественно прописанными персонажами, игра отличается сильной атмосферой и грамотно 
+  подобранными саундтреками.`,
+  "rdr2": `Red Dead Redemption 2 — одна из немногих игр в своем жанре, здесь можно встретить 
+  глубокий сюжет, сногсшибательную картинку, живых героев и NPC и невообразимое внимание к деталям.`,
+  "cyb": `Cyberpunk 2077 — игра с передовыми технологиями в направлениях графики и возможностями в 
+  геймплее, здесь не получится скучать, история окунет в себя по голову, детально проработанный 
+  город скрасит десятки вечеров, а судьба персонажей шокирует любого.`,
+  "tlou": `The Last of Us 1 впечатлила меня добрыми и умными героями, увлекающим геймплеем, красивой 
+  графикой и запоминающимися саундтреками. Эта игра способна и испугать и вызвать слезы, а стелс и 
+  бои здесь сделаны на высшем уровне.`,
+  "alw2": `Alan Wake 2 это новый уровень в мире графики, изображение в лесу здесь сложно отличить от 
+  реальности. Сюжет игры прописан старательно и нетривиально, за персонажами интересно 
+  наблюдать, а на протяжении всего времени прохождения я испытывал напряжение и ожидал новые сюрпризы.`,
+};
+
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[m]);
+}
+
+function createCard(game) {
+  const wrap = document.createElement('div');
+  wrap.className = 'card-wrap';
+  wrap.dataset.id = game.id;
+
+  for (const k in game.ratings) {
+    wrap.dataset[k] = game.ratings[k];
+  }
+
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.backgroundImage = `url(${game.image})`;
+  card.innerHTML = `
+    <div class="popup">
+      <div>Сюжет: ${game.ratings.story}</div>
+      <div>Графика: ${game.ratings.graphics}</div>
+      <div>Геймплей: ${game.ratings.gameplay}</div>
+      <div>Герой: ${game.ratings.main_character}</div>
+      <div>Персонажи: ${game.ratings.characters}</div>
+      <div>Атмосфера: ${game.ratings.atmosphere}</div>
+      <div>Музыка: ${game.ratings.music}</div>
+    </div>
+    <div class="badge">${game.ratings.rating}</div>
+    <div class="title">${escapeHtml(game.title)}</div>
+  `;
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function buildGrid() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  for (const game of GAMES) {
+    grid.appendChild(createCard(game));
+  }
+  document.querySelector('.title').textContent = `Тир-лист видеоигр (${GAMES.length} игр)`;
+}
+
+function flipSortByCriterion(criterion) {
+  const container = document.getElementById('grid');
+  const cards = Array.from(container.children);
+
+  // First — запоминаем начальные позиции
+  const firstRects = new Map();
+  cards.forEach(card => {
+    firstRects.set(card, card.getBoundingClientRect());
+  });
+
+  // Sort
+  const sortedCards = cards.slice().sort((a, b) => {
+    const va = parseFloat(a.dataset[criterion] ?? 0);
+    const vb = parseFloat(b.dataset[criterion] ?? 0);
+    return vb - va;
+  });
+
+  // Reorder DOM
+  sortedCards.forEach((card, index) => {
+    container.appendChild(card);
+    const badge = card.querySelector('.badge');
+    if (badge) {
+      badge.innerHTML = `
+        <div>${card.dataset.rating}</div>
+        <div class="rank">#${index + 1}</div>
+      `;
+    }
+  });
+
+  // Last — новые позиции
+  const lastRects = new Map();
+  sortedCards.forEach(card => {
+    lastRects.set(card, card.getBoundingClientRect());
+  });
+
+  // Invert — смещаем в старую позицию
+  sortedCards.forEach(card => {
+    const first = firstRects.get(card);
+    const last = lastRects.get(card);
+    const dx = first.left - last.left;
+    const dy = first.top - last.top;
+    card.style.transform = `translate(${dx}px, ${dy}px)`;
+    card.style.transition = 'transform 0s';
+  });
+
+  // 6. Play — плавно возвращаем на место + fade-in
+requestAnimationFrame(() => {
+  sortedCards.forEach(card => {
+    card.style.transition = 'transform 520ms cubic-bezier(.2,.8,.2,1), opacity 300ms ease';
+    card.style.transform = '';
+    card.style.opacity = '1';
+  });
+});
+}
+
+function openGameModal(game) {
+  const modal = document.getElementById('game-modal');
+  const content = modal.querySelector('.modal-content');
+
+  content.innerHTML = `
+    <span class="close-btn" onclick="closeGameModal()">×</span>
+    <h2>${escapeHtml(game.title)}</h2>
+    <div class="criteria">
+      Сюжет: ${game.ratings.story}<br>
+      Графика: ${game.ratings.graphics}<br>
+      Геймплей: ${game.ratings.gameplay}<br>
+      Главный герой: ${game.ratings.main_character}<br>
+      Персонажи: ${game.ratings.characters}<br>
+      Атмосфера: ${game.ratings.atmosphere}<br>
+      Музыка: ${game.ratings.music}
+    </div>
+    <p>${REVIEWS[game.id] || "Описание скоро появится..."}</p>
+  `;
+
+  modal.style.display = 'flex';
+  requestAnimationFrame(() => modal.classList.add('show'));
+}
+
+function closeGameModal() {
+  const modal = document.getElementById('game-modal');
+  modal.classList.remove('show');
+  modal.classList.add('fade-out');
+  setTimeout(() => {
+    modal.style.display = 'none';
+    modal.classList.remove('fade-out');
+  }, 100);
+}
+
+// Обработчики
+
+document.getElementById('criterion').addEventListener('change', e => {
+  flipSortByCriterion(e.target.value);
+});
+
+document.getElementById('search').addEventListener('input', function() {
+  const query = this.value.trim().toLowerCase();
+  const cards = document.querySelectorAll('#grid .card-wrap');
+  cards.forEach(card => {
+    const title = card.querySelector('.title').textContent.toLowerCase();
+    card.style.display = title.includes(query) ? '' : 'none';
+  });
+});
+
+document.getElementById('grid').addEventListener('click', e => {
+  const wrap = e.target.closest('.card-wrap');
+  if (!wrap) return;
+  const gameId = wrap.dataset.id;
+  const game = GAMES.find(g => g.id === gameId);
+  if (game) openGameModal(game);
+});
+
+document.querySelector('#game-modal .close-btn').addEventListener('click', closeGameModal);
+document.getElementById('game-modal').addEventListener('click', e => {
+  if (e.target.id === 'game-modal') closeGameModal();
+});
+
+// Тема переключение (оставил без изменений)
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('change', () => {
+  document.body.classList.toggle('dark', themeToggle.checked);
+  localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+});
+if (localStorage.getItem('theme') === 'dark') {
+  document.body.classList.add('dark');
+  themeToggle.checked = true;
+}
+
+// Кнопка "Наверх"
+const scrollBtn = document.getElementById('scroll-to-top');
+scrollBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 300) {
+    scrollBtn.classList.add('visible');
+  } else {
+    scrollBtn.classList.remove('visible');
+  }
+});
+
+// Запускаем сразу
+buildGrid();
+document.getElementById('criterion').value = 'rating';
+flipSortByCriterion('rating');
+
+const searchInput = document.getElementById('search');
+const clearSearch = document.getElementById('clear-search');
+
+searchInput.addEventListener('input', () => {
+    clearSearch.style.display = searchInput.value ? 'block' : 'none';
+});
+
+clearSearch.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearch.style.display = 'none';
+    searchInput.dispatchEvent(new Event('input')); // чтобы обновить фильтрацию
+});
+
+</script>
+</body>
+</html>
